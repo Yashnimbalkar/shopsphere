@@ -8,6 +8,11 @@ const registerValidationRules = [
     .withMessage('Password must be at least 6 characters'),
 ]
 
+const loginValidationRules = [
+  body('email').isEmail().withMessage('A valid email is required'),
+  body('password').notEmpty().withMessage('Password is required'),
+]
+
 function validate(req, res, next) {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
@@ -16,4 +21,4 @@ function validate(req, res, next) {
   next()
 }
 
-module.exports = { registerValidationRules, validate }
+module.exports = { registerValidationRules, loginValidationRules, validate }
