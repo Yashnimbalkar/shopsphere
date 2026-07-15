@@ -5,15 +5,12 @@ const generateToken = require('../utils/generateToken')
 async function register(req, res) {
   try {
     const { name, email, password } = req.body
-
     const existingUser = await findUserByEmail(email)
     if (existingUser) {
       return res.status(409).json({ message: 'An account with this email already exists' })
     }
-
     const hashedPassword = await bcrypt.hash(password, 10)
     const userId = await createUser({ name, email, hashedPassword })
-
     res.status(201).json({
       message: 'Account created successfully',
       user: { id: userId, name, email },
@@ -27,19 +24,15 @@ async function register(req, res) {
 async function login(req, res) {
   try {
     const { email, password } = req.body
-
     const user = await findUserByEmail(email)
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
-
     const passwordMatches = await bcrypt.compare(password, user.password)
     if (!passwordMatches) {
       return res.status(401).json({ message: 'Invalid email or password' })
     }
-
     const token = generateToken(user)
-
     res.status(200).json({
       message: 'Login successful',
       token,
@@ -51,4 +44,9 @@ async function login(req, res) {
   }
 }
 
-module.exports = { register, login }
+async function getMe(req, res) {
+  // req.user was set by the `protect` middleware after verifying the token
+  res.status(200).json({ user: req.user })
+}
+
+module.exports = { register, login, getMe }
