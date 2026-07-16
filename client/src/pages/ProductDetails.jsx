@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { FiStar, FiShoppingCart, FiMinus, FiPlus } from 'react-icons/fi'
 import { fetchProductById } from '../services/productService'
+import { addToCart as addToCartApi } from '../services/cartService'
+import { setCart } from '../redux/cartSlice'
+import { useAuth } from '../context/useAuth'
 
 function ProductDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { user } = useAuth()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [quantity, setQuantity] = useState(1)
+  const [adding, setAdding] = useState(false)
 
    useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- standard loading-state pattern for data fetching
@@ -22,6 +30,22 @@ function ProductDetails() {
       })
       .finally(() => setLoading(false))
   }, [id])
+
+  async function handleAddToCart() {
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    setAdding(true)
+    try {
+      const items = await addToCartApi(id, quantity)
+      dispatch(setCart(items))
+    } catch (err) {
+      console.error('Failed to add to cart:', err)
+    } finally {
+      setAdding(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -110,9 +134,13 @@ function ProductDetails() {
                 </div>
               </div>
 
-              <button className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-md transition-colors w-full md:w-auto">
+              <button
+                onClick={handleAddToCart}
+                disabled={adding}
+                className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold px-8 py-3 rounded-md transition-colors w-full md:w-auto disabled:opacity-60"
+              >
                 <FiShoppingCart size={18} />
-                Add to Cart
+                {adding ? 'Adding...' : 'Add to Cart'}
               </button>
             </>
           )}

@@ -1,10 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth'
 
 function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const cartItems = useSelector((state) => state.cart.items)
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   function handleLogout() {
     logout()
@@ -49,10 +52,17 @@ function Navbar() {
               <span className="text-sm">Account</span>
             </Link>
           )}
-          <Link to="/cart" className="flex items-center gap-1 hover:text-emerald-400 transition-colors">
+
+          <Link to="/cart" className="relative flex items-center gap-1 hover:text-emerald-400 transition-colors">
             <FiShoppingCart size={20} />
             <span className="text-sm hidden sm:inline">Cart</span>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-amber-500 text-gray-900 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
           </Link>
+
           <button className="md:hidden">
             <FiMenu size={22} />
           </button>

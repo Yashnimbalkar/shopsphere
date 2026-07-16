@@ -1,13 +1,39 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useState } from 'react'
 import { FiStar, FiShoppingCart } from 'react-icons/fi'
+import { useAuth } from '../context/useAuth'
+import { addToCart as addToCartApi } from '../services/cartService'
+import { setCart } from '../redux/cartSlice'
 
 function ProductCard({ product }) {
   const { id, name, price, original_price, rating, review_count, image, stock_quantity } = product
   const inStock = stock_quantity > 0
+  const { user } = useAuth()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [adding, setAdding] = useState(false)
 
   const discountPercent = original_price
     ? Math.round(((original_price - price) / original_price) * 100)
     : 0
+
+  async function handleAddToCart(e) {
+    e.preventDefault() // stop the parent Link from navigating
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    setAdding(true)
+    try {
+      const items = await addToCartApi(id, 1)
+      dispatch(setCart(items))
+    } catch (err) {
+      console.error('Failed to add to cart:', err)
+    } finally {
+      setAdding(false)
+    }
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow p-4 flex flex-col">
@@ -22,9 +48,7 @@ function ProductCard({ product }) {
           </span>
         )}
 
-        <h3 className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">
-          {name}
-        </h3>
+        <h3 className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">{name}</h3>
 
         <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
           <FiStar className="text-amber-500 fill-amber-500" size={14} />
@@ -42,9 +66,13 @@ function ProductCard({ product }) {
 
       <div className="mt-auto">
         {inStock ? (
-          <button className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium py-2 rounded-md transition-colors">
+          <button
+            onClick={handleAddToCart}
+            disabled={adding}
+            className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-gray-900 font-medium py-2 rounded-md transition-colors disabled:opacity-60"
+          >
             <FiShoppingCart size={16} />
-            Add to Cart
+            {adding ? 'Adding...' : 'Add to Cart'}
           </button>
         ) : (
           <button
