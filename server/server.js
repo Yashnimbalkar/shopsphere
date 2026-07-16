@@ -5,23 +5,21 @@ require('dotenv').config()
 
 const pool = require('./config/db')
 const authRoutes = require('./routes/authRoutes')
+const productRoutes = require('./routes/productRoutes')
 
 const app = express()
 
-// Middleware
 app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
-// Routes
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 
-// Test route
 app.get('/', (req, res) => {
   res.json({ message: 'ShopSphere API is running' })
 })
 
-// Test DB connection route
 app.get('/api/health/db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS result')
