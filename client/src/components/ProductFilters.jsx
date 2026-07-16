@@ -1,7 +1,6 @@
 const categories = ['electronics', 'fashion', 'home-kitchen', 'sports']
-const brands = ['SoundCore', 'FitPulse', 'KeyTech', 'PowerMax', 'StrideFit', 'UrbanWear', 'HomeEase']
 
-function ProductFilters({ filters, onFilterChange }) {
+function ProductFilters({ filters, onFilterChange, brandOptions = [] }) {
   const toggleCategory = (cat) => {
     const updated = filters.categories.includes(cat)
       ? filters.categories.filter((c) => c !== cat)
@@ -35,7 +34,7 @@ function ProductFilters({ filters, onFilterChange }) {
 
       <h3 className="font-semibold text-gray-800 mb-3">Brand</h3>
       <div className="space-y-2 mb-6">
-        {brands.map((brand) => (
+        {brandOptions.map((brand) => (
           <label key={brand} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
             <input
               type="checkbox"
