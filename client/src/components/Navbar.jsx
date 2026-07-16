@@ -32,9 +32,9 @@ function Navbar() {
         <div className="flex items-center gap-5 ml-auto">
           {user ? (
             <>
-              <span className="hidden sm:inline text-sm text-gray-300">
+              <Link to="/profile" className="hidden sm:inline text-sm text-gray-300 hover:text-emerald-400 transition-colors">
                 Hi, {user.name?.split(' ')[0] || user.email}
-              </span>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1 hover:text-emerald-400 transition-colors"

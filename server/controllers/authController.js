@@ -1,5 +1,12 @@
 const bcrypt = require('bcrypt')
-const { findUserByEmail, createUser } = require('../models/userModel')
+const crypto = require('crypto')
+const {
+  findUserByEmail,
+  createUser,
+  setResetToken,
+  findUserByResetToken,
+  updatePasswordAndClearToken,
+} = require('../models/userModel')
 const generateToken = require('../utils/generateToken')
 
 async function register(req, res) {
@@ -45,8 +52,55 @@ async function login(req, res) {
 }
 
 async function getMe(req, res) {
-  // req.user was set by the `protect` middleware after verifying the token
   res.status(200).json({ user: req.user })
 }
 
-module.exports = { register, login, getMe }
+async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body
+    const user = await findUserByEmail(email)
+
+    if (!user) {
+      return res.status(200).json({
+        message: 'If an account exists with that email, a reset link has been sent.',
+      })
+    }
+
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiry = new Date(Date.now() + 60 * 60 * 1000)
+
+    await setResetToken(email, token, expiry)
+
+    const resetLink = `http://localhost:5173/reset-password/${token}`
+
+    res.status(200).json({
+      message: 'If an account exists with that email, a reset link has been sent.',
+      devResetLink: resetLink,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error during password reset request' })
+  }
+}
+
+async function resetPassword(req, res) {
+  try {
+    const { token } = req.params
+    const { password } = req.body
+
+    const user = await findUserByResetToken(token)
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' })
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    await updatePasswordAndClearToken(user.id, hashedPassword)
+
+    res.status(200).json({ message: 'Password reset successful. You can now log in.' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error during password reset' })
+  }
+}
+
+module.exports = { register, login, getMe, forgotPassword, resetPassword }  

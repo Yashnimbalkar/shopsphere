@@ -6,7 +6,11 @@ import ProductDetails from '../pages/ProductDetails'
 import Cart from '../pages/Cart'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
+import ForgotPassword from '../pages/ForgotPassword'
+import ResetPassword from '../pages/ResetPassword'
+import Profile from '../pages/Profile'
 import NotFound from '../pages/NotFound'
+import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +23,16 @@ const router = createBrowserRouter([
       { path: 'cart', element: <Cart /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password/:token', element: <ResetPassword /> },
+      {
+        path: 'profile',
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
       { path: '*', element: <NotFound /> },
     ],
   },
