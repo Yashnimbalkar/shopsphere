@@ -12,8 +12,8 @@ import Profile from '../pages/Profile'
 import NotFound from '../pages/NotFound'
 import ProtectedRoute from './ProtectedRoute'
 import Wishlist from '../pages/Wishlist'
-
-
+import Checkout from '../pages/Checkout'
+import OrderConfirmation from '../pages/OrderConfirmation'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +34,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'checkout',
+        element: (
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'order-confirmation/:orderId',
+        element: (
+          <ProtectedRoute>
+            <OrderConfirmation />
           </ProtectedRoute>
         ),
       },

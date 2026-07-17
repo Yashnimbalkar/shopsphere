@@ -1,0 +1,58 @@
+const pool = require('../config/db')
+
+async function createOrder(userId, { addressId, subtotal, shipping, tax, total, paymentMethod, items }) {
+  const connection = await pool.getConnection()
+  try {
+    await connection.beginTransaction()
+
+    const [orderResult] = await connection.query(
+      `INSERT INTO orders (user_id, address_id, subtotal, shipping, tax, total, payment_method)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [userId, addressId, subtotal, shipping, tax, total, paymentMethod]
+    )
+    const orderId = orderResult.insertId
+
+    for (const item of items) {
+      await connection.query(
+        `INSERT INTO order_items (order_id, product_id, product_name, price, quantity)
+         VALUES (?, ?, ?, ?, ?)`,
+        [orderId, item.product_id, item.name, item.price, item.quantity]
+      )
+      await connection.query(
+        'UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?',
+        [item.quantity, item.product_id]
+      )
+    }
+
+    await connection.query('DELETE FROM cart_items WHERE cart_id = (SELECT id FROM cart WHERE user_id = ?)', [userId])
+
+    await connection.commit()
+    return orderId
+  } catch (err) {
+    await connection.rollback()
+    throw err
+  } finally {
+    connection.release()
+  }
+}
+
+async function getOrdersByUser(userId) {
+  const [rows] = await pool.query(
+    'SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC',
+    [userId]
+  )
+  return rows
+}
+
+async function getOrderById(orderId, userId) {
+  const [orderRows] = await pool.query(
+    'SELECT * FROM orders WHERE id = ? AND user_id = ?',
+    [orderId, userId]
+  )
+  if (!orderRows[0]) return null
+
+  const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId])
+  return { ...orderRows[0], items }
+}
+
+module.exports = { createOrder, getOrdersByUser, getOrderById }
