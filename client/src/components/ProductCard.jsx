@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useState } from 'react'
-import { FiStar, FiShoppingCart } from 'react-icons/fi'
+import { FiStar, FiShoppingCart, FiHeart } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth'
 import { addToCart as addToCartApi } from '../services/cartService'
+import { addToWishlist, removeFromWishlist } from '../services/wishlistService'
 import { setCart } from '../redux/cartSlice'
+import { setWishlist } from '../redux/wishlistSlice'
 
 function ProductCard({ product }) {
   const { id, name, price, original_price, rating, review_count, image, stock_quantity } = product
@@ -13,13 +15,17 @@ function ProductCard({ product }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [adding, setAdding] = useState(false)
+  const [wishlistBusy, setWishlistBusy] = useState(false)
+
+  const wishlistItems = useSelector((state) => state.wishlist.items)
+  const isWishlisted = wishlistItems.some((item) => item.id === id)
 
   const discountPercent = original_price
     ? Math.round(((original_price - price) / original_price) * 100)
     : 0
 
   async function handleAddToCart(e) {
-    e.preventDefault() // stop the parent Link from navigating
+    e.preventDefault()
     if (!user) {
       navigate('/login')
       return
@@ -35,8 +41,36 @@ function ProductCard({ product }) {
     }
   }
 
+  async function handleToggleWishlist(e) {
+    e.preventDefault()
+    if (!user) {
+      navigate('/login')
+      return
+    }
+    setWishlistBusy(true)
+    try {
+      const items = isWishlisted
+        ? await removeFromWishlist(id)
+        : await addToWishlist(id)
+      dispatch(setWishlist(items))
+    } catch (err) {
+      console.error('Failed to update wishlist:', err)
+    } finally {
+      setWishlistBusy(false)
+    }
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow p-4 flex flex-col">
+    <div className="relative bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow p-4 flex flex-col">
+      <button
+        onClick={handleToggleWishlist}
+        disabled={wishlistBusy}
+        className="absolute top-3 right-3 z-10 text-gray-400 hover:text-red-500 transition-colors"
+        aria-label="Toggle wishlist"
+      >
+        <FiHeart size={18} className={isWishlisted ? 'fill-red-500 text-red-500' : ''} />
+      </button>
+
       <Link to={`/products/${id}`} className="flex flex-col flex-1">
         <div className="h-40 flex items-center justify-center bg-gray-50 rounded-md text-6xl mb-3">
           {image}

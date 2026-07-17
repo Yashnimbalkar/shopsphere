@@ -11,6 +11,9 @@ import ResetPassword from '../pages/ResetPassword'
 import Profile from '../pages/Profile'
 import NotFound from '../pages/NotFound'
 import ProtectedRoute from './ProtectedRoute'
+import Wishlist from '../pages/Wishlist'
+
+
 
 const router = createBrowserRouter([
   {
@@ -25,6 +28,7 @@ const router = createBrowserRouter([
       { path: 'register', element: <Register /> },
       { path: 'forgot-password', element: <ForgotPassword /> },
       { path: 'reset-password/:token', element: <ResetPassword /> },
+      { path: 'wishlist', element: <Wishlist /> },
       {
         path: 'profile',
         element: (
