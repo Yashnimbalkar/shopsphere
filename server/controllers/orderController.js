@@ -69,4 +69,44 @@ async function getMyOrder(req, res) {
   }
 }
 
+
+const { getAllOrders, updateOrderStatus, getAnyOrderById } = require('../models/orderModel')
+
+async function adminListOrders(req, res) {
+  try {
+    const orders = await getAllOrders()
+    res.status(200).json({ orders })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error fetching orders' })
+  }
+}
+
+async function adminGetOrder(req, res) {
+  try {
+    const order = await getAnyOrderById(req.params.id)
+    if (!order) return res.status(404).json({ message: 'Order not found' })
+    res.status(200).json({ order })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error fetching order' })
+  }
+}
+
+async function adminUpdateStatus(req, res) {
+  try {
+    const { status } = req.body
+    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' })
+    }
+    await updateOrderStatus(req.params.id, status)
+    res.status(200).json({ message: 'Order status updated' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error updating order' })
+  }
+}
+
+
 module.exports = { placeOrder, listMyOrders, getMyOrder }

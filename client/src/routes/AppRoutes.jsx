@@ -22,7 +22,10 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminProducts from "../pages/admin/AdminProducts";
 import AdminProductForm from "../pages/admin/AdminProductForm";
 
-import AdminCategories from '../pages/admin/AdminCategories'
+import AdminCategories from "../pages/admin/AdminCategories";
+
+import AdminOrders from "../pages/admin/AdminOrders";
+import AdminOrderDetail from "../pages/admin/AdminOrderDetail";
 
 const router = createBrowserRouter([
   {
@@ -77,8 +80,9 @@ const router = createBrowserRouter([
       { path: "products", element: <AdminProducts /> },
       { path: "products/new", element: <AdminProductForm /> },
       { path: "products/:id/edit", element: <AdminProductForm /> },
-      { path: 'categories', element: <AdminCategories /> },
-
+      { path: "categories", element: <AdminCategories /> },
+      { path: "orders", element: <AdminOrders /> },
+      { path: "orders/:id", element: <AdminOrderDetail /> },
     ],
   },
 ]);

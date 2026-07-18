@@ -54,5 +54,30 @@ async function getOrderById(orderId, userId) {
   const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId])
   return { ...orderRows[0], items }
 }
+async function getAllOrders() {
+  const [rows] = await pool.query(
+    `SELECT o.*, u.name AS customer_name, u.email AS customer_email
+     FROM orders o JOIN users u ON o.user_id = u.id
+     ORDER BY o.created_at DESC`
+  )
+  return rows
+}
+
+async function updateOrderStatus(orderId, status) {
+  await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId])
+}
+
+async function getAnyOrderById(orderId) {
+  const [orderRows] = await pool.query(
+    `SELECT o.*, u.name AS customer_name, u.email AS customer_email
+     FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?`,
+    [orderId]
+  )
+  if (!orderRows[0]) return null
+  const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId])
+  return { ...orderRows[0], items }
+}
+
+
 
 module.exports = { createOrder, getOrdersByUser, getOrderById }
