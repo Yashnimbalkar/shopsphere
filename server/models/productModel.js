@@ -88,4 +88,30 @@ async function getDistinctBrands() {
   return rows.map((r) => r.brand)
 }
 
-module.exports = { getProducts, countProducts, getProductById, getDistinctBrands }
+async function createProduct(data) {
+  const { categoryId, name, description, brand, price, originalPrice, stockQuantity, image } = data
+  const [result] = await pool.query(
+    `INSERT INTO products (category_id, name, description, brand, price, original_price, stock_quantity, image)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [categoryId, name, description, brand, price, originalPrice || null, stockQuantity, image]
+  )
+  return result.insertId
+}
+
+async function updateProduct(id, data) {
+  const { categoryId, name, description, brand, price, originalPrice, stockQuantity, image } = data
+  await pool.query(
+    `UPDATE products SET category_id=?, name=?, description=?, brand=?, price=?, original_price=?, stock_quantity=?, image=?
+     WHERE id=?`,
+    [categoryId, name, description, brand, price, originalPrice || null, stockQuantity, image, id]
+  )
+}
+
+async function deleteProduct(id) {
+  await pool.query('DELETE FROM products WHERE id = ?', [id])
+}
+
+module.exports = {
+  getProducts, countProducts, getProductById, getDistinctBrands,
+  createProduct, updateProduct, deleteProduct, // add these to existing exports
+}

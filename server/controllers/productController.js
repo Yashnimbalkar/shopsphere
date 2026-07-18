@@ -76,4 +76,36 @@ async function listBrands(req, res) {
   }
 }
 
+const { createProduct, updateProduct, deleteProduct } = require('../models/productModel') // add to existing import
+
+async function adminCreateProduct(req, res) {
+  try {
+    const id = await createProduct(req.body)
+    res.status(201).json({ message: 'Product created', id })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error creating product' })
+  }
+}
+
+async function adminUpdateProduct(req, res) {
+  try {
+    await updateProduct(req.params.id, req.body)
+    res.status(200).json({ message: 'Product updated' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error updating product' })
+  }
+}
+
+async function adminDeleteProduct(req, res) {
+  try {
+    await deleteProduct(req.params.id)
+    res.status(200).json({ message: 'Product deleted' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error deleting product' })
+  }
+}
+
 module.exports = { listProducts, getProduct, listCategories, listBrands }

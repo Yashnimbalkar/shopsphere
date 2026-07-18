@@ -19,6 +19,9 @@ import AdminLayout from "../layouts/AdminLayout";
 import AdminRoute from "./AdminRoute";
 import Dashboard from "../pages/admin/Dashboard";
 
+import AdminProducts from "../pages/admin/AdminProducts";
+import AdminProductForm from "../pages/admin/AdminProductForm";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -69,7 +72,9 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Dashboard /> },
-      // more admin pages added Day 22-25
+      { path: "products", element: <AdminProducts /> },
+      { path: "products/new", element: <AdminProductForm /> },
+      { path: "products/:id/edit", element: <AdminProductForm /> },
     ],
   },
 ]);
