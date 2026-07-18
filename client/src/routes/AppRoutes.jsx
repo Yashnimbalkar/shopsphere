@@ -1,36 +1,40 @@
-import { createBrowserRouter } from 'react-router-dom'
-import MainLayout from '../layouts/MainLayout'
-import Home from '../pages/Home'
-import Products from '../pages/Products'
-import ProductDetails from '../pages/ProductDetails'
-import Cart from '../pages/Cart'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import ForgotPassword from '../pages/ForgotPassword'
-import ResetPassword from '../pages/ResetPassword'
-import Profile from '../pages/Profile'
-import NotFound from '../pages/NotFound'
-import ProtectedRoute from './ProtectedRoute'
-import Wishlist from '../pages/Wishlist'
-import Checkout from '../pages/Checkout'
-import OrderConfirmation from '../pages/OrderConfirmation'
+import { createBrowserRouter } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
+import Home from "../pages/Home";
+import Products from "../pages/Products";
+import ProductDetails from "../pages/ProductDetails";
+import Cart from "../pages/Cart";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
+import Profile from "../pages/Profile";
+import NotFound from "../pages/NotFound";
+import ProtectedRoute from "./ProtectedRoute";
+import Wishlist from "../pages/Wishlist";
+import Checkout from "../pages/Checkout";
+import OrderConfirmation from "../pages/OrderConfirmation";
+
+import AdminLayout from "../layouts/AdminLayout";
+import AdminRoute from "./AdminRoute";
+import Dashboard from "../pages/admin/Dashboard";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'products', element: <Products /> },
-      { path: 'products/:id', element: <ProductDetails /> },
-      { path: 'cart', element: <Cart /> },
-      { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> },
-      { path: 'forgot-password', element: <ForgotPassword /> },
-      { path: 'reset-password/:token', element: <ResetPassword /> },
-      { path: 'wishlist', element: <Wishlist /> },
+      { path: "products", element: <Products /> },
+      { path: "products/:id", element: <ProductDetails /> },
+      { path: "cart", element: <Cart /> },
+      { path: "login", element: <Login /> },
+      { path: "register", element: <Register /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "reset-password/:token", element: <ResetPassword /> },
+      { path: "wishlist", element: <Wishlist /> },
       {
-        path: 'profile',
+        path: "profile",
         element: (
           <ProtectedRoute>
             <Profile />
@@ -38,7 +42,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'checkout',
+        path: "checkout",
         element: (
           <ProtectedRoute>
             <Checkout />
@@ -46,16 +50,28 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'order-confirmation/:orderId',
+        path: "order-confirmation/:orderId",
         element: (
           <ProtectedRoute>
             <OrderConfirmation />
           </ProtectedRoute>
         ),
       },
-      { path: '*', element: <NotFound /> },
+      { path: "*", element: <NotFound /> },
     ],
   },
-])
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
+    children: [
+      { index: true, element: <Dashboard /> },
+      // more admin pages added Day 22-25
+    ],
+  },
+]);
 
-export default router
+export default router;
