@@ -3,8 +3,16 @@ const {
   countProducts,
   getProductById,
   getDistinctBrands,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 } = require('../models/productModel')
-const { getAllCategories } = require('../models/categoryModel')
+const {
+  getAllCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} = require('../models/categoryModel')
 
 async function listProducts(req, res) {
   try {
@@ -76,8 +84,6 @@ async function listBrands(req, res) {
   }
 }
 
-const { createProduct, updateProduct, deleteProduct } = require('../models/productModel') // add to existing import
-
 async function adminCreateProduct(req, res) {
   try {
     const id = await createProduct(req.body)
@@ -108,4 +114,49 @@ async function adminDeleteProduct(req, res) {
   }
 }
 
-module.exports = { listProducts, getProduct, listCategories, listBrands }
+async function adminCreateCategory(req, res) {
+  try {
+    const { name, slug, icon } = req.body
+    const id = await createCategory(name, slug, icon)
+    res.status(201).json({ message: 'Category created', id })
+  } catch (err) {
+    console.error(err)
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ message: 'Category name or slug already exists' })
+    res.status(500).json({ message: 'Server error creating category' })
+  }
+}
+
+async function adminUpdateCategory(req, res) {
+  try {
+    const { name, slug, icon } = req.body
+    await updateCategory(req.params.id, name, slug, icon)
+    res.status(200).json({ message: 'Category updated' })
+  } catch (err) {
+    console.error(err)
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ message: 'Category name or slug already exists' })
+    res.status(500).json({ message: 'Server error updating category' })
+  }
+}
+
+async function adminDeleteCategory(req, res) {
+  try {
+    await deleteCategory(req.params.id)
+    res.status(200).json({ message: 'Category deleted' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error deleting category' })
+  }
+}
+
+module.exports = {
+  listProducts,
+  getProduct,
+  listCategories,
+  listBrands,
+  adminCreateProduct,
+  adminUpdateProduct,
+  adminDeleteProduct,
+  adminCreateCategory,
+  adminUpdateCategory,
+  adminDeleteCategory,
+}
