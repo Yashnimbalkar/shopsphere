@@ -26,6 +26,7 @@ import AdminCategories from "../pages/admin/AdminCategories";
 
 import AdminOrders from "../pages/admin/AdminOrders";
 import AdminOrderDetail from "../pages/admin/AdminOrderDetail";
+import AdminUsers from '../pages/admin/AdminUsers'
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,7 @@ const router = createBrowserRouter([
       { path: "categories", element: <AdminCategories /> },
       { path: "orders", element: <AdminOrders /> },
       { path: "orders/:id", element: <AdminOrderDetail /> },
+      { path: 'users', element: <AdminUsers /> },
     ],
   },
 ]);
