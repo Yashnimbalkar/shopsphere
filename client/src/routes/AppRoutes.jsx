@@ -22,6 +22,8 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminProducts from "../pages/admin/AdminProducts";
 import AdminProductForm from "../pages/admin/AdminProductForm";
 
+import AdminCategories from '../pages/admin/AdminCategories'
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -75,6 +77,8 @@ const router = createBrowserRouter([
       { path: "products", element: <AdminProducts /> },
       { path: "products/new", element: <AdminProductForm /> },
       { path: "products/:id/edit", element: <AdminProductForm /> },
+      { path: 'categories', element: <AdminCategories /> },
+
     ],
   },
 ]);

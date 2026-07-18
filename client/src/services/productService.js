@@ -33,3 +33,16 @@ export async function deleteProduct(id) {
   const res = await api.delete(`/products/${id}`)
   return res.data
 }
+
+export async function createCategory(data) {
+  const res = await api.post('/products/categories', data)
+  return res.data
+}
+export async function updateCategory(id, data) {
+  const res = await api.put(`/products/categories/${id}`, data)
+  return res.data
+}
+export async function deleteCategory(id) {
+  const res = await api.delete(`/products/categories/${id}`)
+  return res.data
+}
