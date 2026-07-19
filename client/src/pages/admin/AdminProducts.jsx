@@ -14,7 +14,7 @@ function AdminProducts() {
       .finally(() => setLoading(false))
   }
 
-// eslint-disable-next-line react-hooks/set-state-in-effect -- standard loading-state pattern for data fetching
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- standard loading-state pattern for data fetching
   useEffect(loadProducts, [])
 
   async function handleDelete(id, name) {
@@ -56,7 +56,17 @@ function AdminProducts() {
               <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">Loading...</td></tr>
             ) : products.map((p) => (
               <tr key={p.id} className="border-t border-gray-100">
-                <td className="px-4 py-3 text-2xl">{p.image}</td>
+                <td className="px-4 py-3">
+                  {p.image ? (
+                    p.image.startsWith('http') ? (
+                      <img src={p.image} alt={p.name} className="w-10 h-10 object-contain rounded" />
+                    ) : (
+                      <span className="text-2xl">{p.image}</span>
+                    )
+                  ) : (
+                    <span className="text-2xl">📦</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">{p.name}</td>
                 <td className="px-4 py-3">₹{p.price}</td>
                 <td className="px-4 py-3">

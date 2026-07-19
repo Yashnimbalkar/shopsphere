@@ -9,7 +9,11 @@ function CartItem({ item, onUpdateQuantity, onRemove, updating }) {
     <div className="flex items-center gap-4 py-4 border-b border-gray-200 last:border-0">
       <Link to={`/products/${product_id}`} className="w-20 h-20 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden shrink-0">
         {image ? (
-          <img src={image} alt={name} className="w-full h-full object-contain" />
+          image.startsWith('http') ? (
+            <img src={image} alt={name} className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-4xl">{image}</span>
+          )
         ) : (
           <span className="text-4xl">📦</span>
         )}

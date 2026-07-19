@@ -85,7 +85,11 @@ function ProductDetails() {
       <div className="flex flex-col md:flex-row gap-10">
         <div className="flex-1 flex items-center justify-center bg-gray-50 rounded-lg h-96 overflow-hidden">
           {image ? (
-            <img src={image} alt={name} className="w-full h-full object-contain" />
+            image.startsWith('http') ? (
+              <img src={image} alt={name} className="w-full h-full object-contain" />
+            ) : (
+              <span className="text-9xl">{image}</span>
+            )
           ) : (
             <span className="text-9xl">📦</span>
           )}
