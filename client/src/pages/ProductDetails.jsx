@@ -18,7 +18,7 @@ function ProductDetails() {
   const [quantity, setQuantity] = useState(1)
   const [adding, setAdding] = useState(false)
 
-   useEffect(() => {
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- standard loading-state pattern for data fetching
     setLoading(true)
     setNotFound(false)
@@ -83,8 +83,12 @@ function ProductDetails() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-10">
-        <div className="flex-1 flex items-center justify-center bg-gray-50 rounded-lg h-96 text-9xl">
-          {image}
+        <div className="flex-1 flex items-center justify-center bg-gray-50 rounded-lg h-96 overflow-hidden">
+          {image ? (
+            <img src={image} alt={name} className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-9xl">📦</span>
+          )}
         </div>
 
         <div className="flex-1">

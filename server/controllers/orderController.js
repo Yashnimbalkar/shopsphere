@@ -1,4 +1,4 @@
-const { createOrder, getOrdersByUser, getOrderById } = require('../models/orderModel')
+const { createOrder, getOrdersByUser, getOrderById, getAllOrders, updateOrderStatus, getAnyOrderById } = require('../models/orderModel')
 const { getAddressById } = require('../models/addressModel')
 const { getCartItems, getOrCreateCart } = require('../models/cartModel')
 
@@ -69,9 +69,6 @@ async function getMyOrder(req, res) {
   }
 }
 
-
-const { getAllOrders, updateOrderStatus, getAnyOrderById } = require('../models/orderModel')
-
 async function adminListOrders(req, res) {
   try {
     const orders = await getAllOrders()
@@ -108,5 +105,11 @@ async function adminUpdateStatus(req, res) {
   }
 }
 
-
-module.exports = { placeOrder, listMyOrders, getMyOrder }
+module.exports = {
+  placeOrder,
+  listMyOrders,
+  getMyOrder,
+  adminListOrders,
+  adminGetOrder,
+  adminUpdateStatus,
+}

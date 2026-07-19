@@ -46,3 +46,12 @@ export async function deleteCategory(id) {
   const res = await api.delete(`/products/categories/${id}`)
   return res.data
 }
+
+export async function uploadProductImage(file) {
+  const formData = new FormData()
+  formData.append('image', file)
+  const res = await api.post('/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return res.data.url
+}

@@ -10,6 +10,7 @@ const cartRoutes = require('./routes/cartRoutes')
 const wishlistRoutes = require('./routes/wishlistRoutes')
 const addressRoutes = require('./routes/addressRoutes')
 const orderRoutes = require('./routes/orderRoutes')
+const uploadRoutes = require('./routes/uploadRoutes')
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
+app.use('/api/upload', uploadRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/cart', cartRoutes)

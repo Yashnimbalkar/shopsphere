@@ -13,17 +13,14 @@ async function getProducts({ category, brand, maxPrice, sortBy, search, page, li
     query += ' AND c.slug = ?'
     params.push(category)
   }
-
   if (brand) {
     query += ' AND p.brand = ?'
     params.push(brand)
   }
-
   if (maxPrice) {
     query += ' AND p.price <= ?'
     params.push(maxPrice)
   }
-
   if (search) {
     query += ' AND p.name LIKE ?'
     params.push(`%${search}%`)
@@ -112,6 +109,11 @@ async function deleteProduct(id) {
 }
 
 module.exports = {
-  getProducts, countProducts, getProductById, getDistinctBrands,
-  createProduct, updateProduct, deleteProduct, // add these to existing exports
+  getProducts,
+  countProducts,
+  getProductById,
+  getDistinctBrands,
+  createProduct,
+  updateProduct,
+  deleteProduct,
 }

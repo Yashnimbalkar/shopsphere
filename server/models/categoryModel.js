@@ -1,3 +1,10 @@
+const pool = require('../config/db')
+
+async function getAllCategories() {
+  const [rows] = await pool.query('SELECT * FROM categories ORDER BY name ASC')
+  return rows
+}
+
 async function createCategory(name, slug, icon) {
   const [result] = await pool.query(
     'INSERT INTO categories (name, slug, icon) VALUES (?, ?, ?)',

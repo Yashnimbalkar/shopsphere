@@ -54,6 +54,7 @@ async function getOrderById(orderId, userId) {
   const [items] = await pool.query('SELECT * FROM order_items WHERE order_id = ?', [orderId])
   return { ...orderRows[0], items }
 }
+
 async function getAllOrders() {
   const [rows] = await pool.query(
     `SELECT o.*, u.name AS customer_name, u.email AS customer_email
@@ -78,6 +79,11 @@ async function getAnyOrderById(orderId) {
   return { ...orderRows[0], items }
 }
 
-
-
-module.exports = { createOrder, getOrdersByUser, getOrderById }
+module.exports = {
+  createOrder,
+  getOrdersByUser,
+  getOrderById,
+  getAllOrders,
+  updateOrderStatus,
+  getAnyOrderById,
+}

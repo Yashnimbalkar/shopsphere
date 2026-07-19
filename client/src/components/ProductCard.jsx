@@ -72,8 +72,12 @@ function ProductCard({ product }) {
       </button>
 
       <Link to={`/products/${id}`} className="flex flex-col flex-1">
-        <div className="h-40 flex items-center justify-center bg-gray-50 rounded-md text-6xl mb-3">
-          {image}
+        <div className="h-40 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden mb-3">
+          {image ? (
+            <img src={image} alt={name} className="w-full h-full object-contain" />
+          ) : (
+            <span className="text-6xl">📦</span>
+          )}
         </div>
 
         {discountPercent > 0 && (
