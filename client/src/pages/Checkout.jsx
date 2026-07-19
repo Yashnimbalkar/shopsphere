@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getAddresses, addAddress } from '../services/addressService'
 import { placeOrder } from '../services/orderService'
 import { clearCart } from '../redux/cartSlice'
+import DummyCardForm from '../components/DummyCardForm'
 
 function Checkout() {
   const items = useSelector((state) => state.cart.items)
@@ -15,6 +16,7 @@ function Checkout() {
   const [showNewAddressForm, setShowNewAddressForm] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [placing, setPlacing] = useState(false)
+  const [cardValid, setCardValid] = useState(false)
   const [error, setError] = useState('')
 
   const [newAddress, setNewAddress] = useState({
@@ -60,10 +62,15 @@ function Checkout() {
       setError('Please select or add a shipping address')
       return
     }
+    if (paymentMethod === 'card' && !cardValid) {
+      setError('Please enter valid card details')
+      return
+    }
     setPlacing(true)
     setError('')
     try {
-      const data = await placeOrder({ addressId: selectedAddressId, paymentMethod })
+      const transactionId = paymentMethod === 'card' ? `TXN-${Date.now()}` : null
+      const data = await placeOrder({ addressId: selectedAddressId, paymentMethod, transactionId })
       dispatch(clearCart())
       navigate(`/order-confirmation/${data.orderId}`)
     } catch (err) {
@@ -210,8 +217,9 @@ function Checkout() {
                   type="radio" checked={paymentMethod === 'card'}
                   onChange={() => setPaymentMethod('card')} className="accent-emerald-600"
                 />
-                Credit / Debit Card <span className="text-xs text-gray-400">(Stripe integration coming in Week 6)</span>
+                Credit / Debit Card
               </label>
+              {paymentMethod === 'card' && <DummyCardForm onCardValidChange={setCardValid} />}
             </div>
           </div>
         </div>
@@ -237,7 +245,7 @@ function Checkout() {
           </div>
           <button
             onClick={handlePlaceOrder}
-            disabled={placing}
+            disabled={placing || (paymentMethod === 'card' && !cardValid)}
             className="w-full bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold py-3 rounded-md transition-colors disabled:opacity-60"
           >
             {placing ? 'Placing Order...' : 'Place Order'}

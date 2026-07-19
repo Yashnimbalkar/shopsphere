@@ -4,7 +4,7 @@ const { getCartItems, getOrCreateCart } = require('../models/cartModel')
 
 async function placeOrder(req, res) {
   try {
-    const { addressId, paymentMethod } = req.body
+    const { addressId, paymentMethod, transactionId } = req.body
 
     const address = await getAddressById(addressId, req.user.id)
     if (!address) {
@@ -36,6 +36,7 @@ async function placeOrder(req, res) {
       tax,
       total,
       paymentMethod: paymentMethod || 'cod',
+      transactionId: transactionId || null,
       items,
     })
 
