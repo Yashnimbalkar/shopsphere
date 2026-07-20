@@ -1,10 +1,11 @@
 const { createOrder, getOrdersByUser, getOrderById, getAllOrders, updateOrderStatus, getAnyOrderById } = require('../models/orderModel')
 const { getAddressById } = require('../models/addressModel')
 const { getCartItems, getOrCreateCart } = require('../models/cartModel')
+const { findValidCoupon, incrementCouponUsage } = require('../models/couponModel')
 
 async function placeOrder(req, res) {
   try {
-    const { addressId, paymentMethod, transactionId } = req.body
+    const { addressId, paymentMethod, transactionId, couponCode } = req.body
 
     const address = await getAddressById(addressId, req.user.id)
     if (!address) {
@@ -27,7 +28,25 @@ async function placeOrder(req, res) {
     const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
     const shipping = subtotal > 0 && subtotal < 500 ? 49 : 0
     const tax = Number((subtotal * 0.05).toFixed(2))
-    const total = Number((subtotal + shipping + tax).toFixed(2))
+
+    let discountAmount = 0
+    let appliedCouponCode = null
+    let coupon = null
+
+    if (couponCode) {
+      coupon = await findValidCoupon(couponCode, subtotal)
+      if (!coupon) {
+        return res.status(400).json({ message: 'Invalid or expired coupon code' })
+      }
+      discountAmount =
+        coupon.discount_type === 'percentage'
+          ? Number(((subtotal * coupon.discount_value) / 100).toFixed(2))
+          : Number(coupon.discount_value)
+      discountAmount = Math.min(discountAmount, subtotal)
+      appliedCouponCode = coupon.code
+    }
+
+    const total = Number((subtotal + shipping + tax - discountAmount).toFixed(2))
 
     const orderId = await createOrder(req.user.id, {
       addressId,
@@ -37,8 +56,14 @@ async function placeOrder(req, res) {
       total,
       paymentMethod: paymentMethod || 'cod',
       transactionId: transactionId || null,
+      couponCode: appliedCouponCode,
+      discountAmount,
       items,
     })
+
+    if (coupon) {
+      await incrementCouponUsage(coupon.id)
+    }
 
     res.status(201).json({ message: 'Order placed successfully', orderId })
   } catch (err) {

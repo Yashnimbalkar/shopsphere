@@ -108,6 +108,19 @@ async function deleteProduct(id) {
   await pool.query('DELETE FROM products WHERE id = ?', [id])
 }
 
+async function getRelatedProducts(productId, categoryId, limit = 4) {
+  const [rows] = await pool.query(
+    `SELECT p.*, c.slug AS category_slug, c.name AS category_name
+     FROM products p
+     JOIN categories c ON p.category_id = c.id
+     WHERE p.category_id = ? AND p.id != ?
+     ORDER BY RAND()
+     LIMIT ?`,
+    [categoryId, productId, limit]
+  )
+  return rows
+}
+
 module.exports = {
   getProducts,
   countProducts,
@@ -116,4 +129,5 @@ module.exports = {
   createProduct,
   updateProduct,
   deleteProduct,
+  getRelatedProducts,
 }

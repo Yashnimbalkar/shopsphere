@@ -1,14 +1,14 @@
 const pool = require('../config/db')
 
-async function createOrder(userId, { addressId, subtotal, shipping, tax, total, paymentMethod, transactionId, items }) {
+async function createOrder(userId, { addressId, subtotal, shipping, tax, total, paymentMethod, transactionId, couponCode, discountAmount, items }) {
   const connection = await pool.getConnection()
   try {
     await connection.beginTransaction()
 
     const [orderResult] = await connection.query(
-      `INSERT INTO orders (user_id, address_id, subtotal, shipping, tax, total, payment_method, transaction_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [userId, addressId, subtotal, shipping, tax, total, paymentMethod, transactionId]
+      `INSERT INTO orders (user_id, address_id, subtotal, shipping, tax, total, payment_method, transaction_id, coupon_code, discount_amount)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [userId, addressId, subtotal, shipping, tax, total, paymentMethod, transactionId, couponCode || null, discountAmount || 0]
     )
     const orderId = orderResult.insertId
 

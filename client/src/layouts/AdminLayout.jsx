@@ -1,11 +1,11 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { FiGrid, FiBox, FiTag, FiShoppingBag, FiUsers } from 'react-icons/fi'
-
+import { FiGrid, FiBox, FiTag, FiShoppingBag, FiUsers, FiPercent } from 'react-icons/fi'
 
 const navItems = [
   { to: '/admin', icon: FiGrid, label: 'Dashboard', exact: true },
   { to: '/admin/products', icon: FiBox, label: 'Products' },
   { to: '/admin/categories', icon: FiTag, label: 'Categories' },
+  { to: '/admin/coupons', icon: FiPercent, label: 'Coupons' },
   { to: '/admin/orders', icon: FiShoppingBag, label: 'Orders' },
   { to: '/admin/users', icon: FiUsers, label: 'Users' },
 ]

@@ -16,7 +16,7 @@ function FeaturedProducts() {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-10">
-      <h2 className="text-xl font-bold text-gray-800 mb-5">Featured Products</h2>
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-5">Featured Products</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)

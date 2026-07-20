@@ -6,6 +6,7 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  getRelatedProducts,
 } = require('../models/productModel')
 const {
   getAllCategories,
@@ -61,6 +62,20 @@ async function getProduct(req, res) {
   } catch (err) {
     console.error(err)
     res.status(500).json({ message: 'Server error fetching product' })
+  }
+}
+
+async function getRelated(req, res) {
+  try {
+    const product = await getProductById(req.params.id)
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' })
+    }
+    const related = await getRelatedProducts(product.id, product.category_id)
+    res.status(200).json({ products: related })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Server error fetching related products' })
   }
 }
 
@@ -153,6 +168,7 @@ async function adminDeleteCategory(req, res) {
 module.exports = {
   listProducts,
   getProduct,
+  getRelated,
   listCategories,
   listBrands,
   adminCreateProduct,

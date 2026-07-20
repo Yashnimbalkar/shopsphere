@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut } from 'react-icons/fi'
+import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut, FiHeart, FiMoon, FiSun } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth'
+import { useTheme } from '../context/useTheme'
 
 function Navbar() {
   const { user, logout } = useAuth()
+  const { darkMode, toggleDarkMode } = useTheme()
   const navigate = useNavigate()
   const cartItems = useSelector((state) => state.cart.items)
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -52,6 +54,14 @@ function Navbar() {
               <span className="text-sm">Account</span>
             </Link>
           )}
+
+          <Link to="/wishlist" className="hidden sm:flex items-center gap-1 hover:text-emerald-400 transition-colors">
+            <FiHeart size={20} />
+          </Link>
+
+          <button onClick={toggleDarkMode} className="hover:text-emerald-400 transition-colors" aria-label="Toggle dark mode">
+            {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
+          </button>
 
           <Link to="/cart" className="relative flex items-center gap-1 hover:text-emerald-400 transition-colors">
             <FiShoppingCart size={20} />
