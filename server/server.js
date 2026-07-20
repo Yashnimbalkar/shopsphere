@@ -11,6 +11,8 @@ const wishlistRoutes = require('./routes/wishlistRoutes')
 const addressRoutes = require('./routes/addressRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const uploadRoutes = require('./routes/uploadRoutes')
+const adminRoutes = require('./routes/adminRoutes')
+const couponRoutes = require('./routes/couponRoutes')
 
 const app = express()
 
@@ -18,13 +20,15 @@ app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/upload', uploadRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/wishlist', wishlistRoutes)
 app.use('/api/addresses', addressRoutes)
 app.use('/api/orders', orderRoutes)
+app.use('/api/upload', uploadRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/coupons', couponRoutes)
 
 app.get('/', (req, res) => {
   res.json({ message: 'ShopSphere API is running' })
