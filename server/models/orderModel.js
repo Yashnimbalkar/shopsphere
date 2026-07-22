@@ -79,6 +79,11 @@ async function getAnyOrderById(orderId) {
   return { ...orderRows[0], items }
 }
 
+async function getOrderOwnerAndId(orderId) {
+  const [rows] = await pool.query('SELECT id, user_id FROM orders WHERE id = ?', [orderId])
+  return rows[0]
+}
+
 module.exports = {
   createOrder,
   getOrdersByUser,
@@ -86,4 +91,5 @@ module.exports = {
   getAllOrders,
   updateOrderStatus,
   getAnyOrderById,
+  getOrderOwnerAndId,
 }

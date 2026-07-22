@@ -1,7 +1,8 @@
-const { createOrder, getOrdersByUser, getOrderById, getAllOrders, updateOrderStatus, getAnyOrderById } = require('../models/orderModel')
+const { createOrder, getOrdersByUser, getOrderById, getAllOrders, updateOrderStatus, getAnyOrderById, getOrderOwnerAndId } = require('../models/orderModel')
 const { getAddressById } = require('../models/addressModel')
 const { getCartItems, getOrCreateCart } = require('../models/cartModel')
 const { findValidCoupon, incrementCouponUsage } = require('../models/couponModel')
+const { createNotification } = require('../models/notificationModel')
 
 async function placeOrder(req, res) {
   try {
@@ -65,6 +66,13 @@ async function placeOrder(req, res) {
       await incrementCouponUsage(coupon.id)
     }
 
+    await createNotification(
+      req.user.id,
+      'Order Placed',
+      `Your order #${orderId} for ₹${total} has been placed successfully.`,
+      'order'
+    )
+
     res.status(201).json({ message: 'Order placed successfully', orderId })
   } catch (err) {
     console.error(err)
@@ -124,6 +132,17 @@ async function adminUpdateStatus(req, res) {
       return res.status(400).json({ message: 'Invalid status' })
     }
     await updateOrderStatus(req.params.id, status)
+
+    const orderInfo = await getOrderOwnerAndId(req.params.id)
+    if (orderInfo) {
+      await createNotification(
+        orderInfo.user_id,
+        'Order Status Updated',
+        `Your order #${req.params.id} is now "${status}".`,
+        'order'
+      )
+    }
+
     res.status(200).json({ message: 'Order status updated' })
   } catch (err) {
     console.error(err)

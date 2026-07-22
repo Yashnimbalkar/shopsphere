@@ -13,6 +13,7 @@ const orderRoutes = require('./routes/orderRoutes')
 const uploadRoutes = require('./routes/uploadRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const couponRoutes = require('./routes/couponRoutes')
+const notificationRoutes = require('./routes/notificationRoutes')
 
 const app = express()
 
@@ -29,6 +30,7 @@ app.use('/api/orders', orderRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/coupons', couponRoutes)
+app.use('/api/notifications', notificationRoutes)
 
 app.get('/', (req, res) => {
   res.json({ message: 'ShopSphere API is running' })

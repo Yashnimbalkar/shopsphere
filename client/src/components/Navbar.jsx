@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut, FiHeart, FiMoon, FiSun } from 'react-icons/fi'
 import { useAuth } from '../context/useAuth'
 import { useTheme } from '../context/useTheme'
+import NotificationBell from './NotificationBell'
 
 function Navbar() {
   const { user, logout } = useAuth()
@@ -58,6 +59,8 @@ function Navbar() {
           <Link to="/wishlist" className="hidden sm:flex items-center gap-1 hover:text-emerald-400 transition-colors">
             <FiHeart size={20} />
           </Link>
+
+          <NotificationBell />
 
           <button onClick={toggleDarkMode} className="hover:text-emerald-400 transition-colors" aria-label="Toggle dark mode">
             {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
